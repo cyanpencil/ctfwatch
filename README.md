@@ -22,3 +22,5 @@ Just `curl ctf.watch` or host your own by cloning this repo!
 Data pulled from ctftime.org
 
 Thanks to @jonasbb's [ctftimebot](https://github.com/jonasbb/ctftimebot) for inspiration!
+
+Mini logos were generated using [chafa](https://github.com/hpjansson/chafa)
