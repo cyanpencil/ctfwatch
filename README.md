@@ -16,3 +16,9 @@ Just `curl cyanpencil.xyz:8081` or host your own by cloning this repo!
 - `docker build -t ctfwatch .`
 
 - `bash run.sh`
+
+# Credits
+
+Data pulled from ctftime.org
+
+Thanks to @jonasbb's [ctftimebot](https://github.com/jonasbb/ctftimebot) for inspiration!
