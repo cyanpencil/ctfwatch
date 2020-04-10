@@ -55,40 +55,67 @@ fn format_duration(d: &Duration) -> String {
     tmp.join(" ")
 }
 
+fn extra_bytes (s1: &String) -> usize {
+    s1.len() - strip_ansi_escapes::strip(&s1).unwrap().len()
+}
+
 fn double_line (s1: &String, s2: &String) -> String {
-    let mut fin = format!("| {}", s1);
-    fin.push_str(&format!(" {: >1$} |", format!(" {}", s2), LEN - 1 - fin.len()));
+    let mut fin = format!("│ {}", s1);
+    let fin_len = strip_ansi_escapes::strip(&fin).unwrap().len();
+    let fin_len2 = strip_ansi_escapes::strip(&s2).unwrap().len();
+    fin.push_str(&format!(" {: >1$} │", format!(" {}", s2), LEN + 1 - fin_len + (s2.len() - fin_len2)));
     fin
+}
+
+fn blue<S: AsRef<str>>(s: S) -> String {
+    format!("{}{}{}", "\x1b[38;2;174;129;255m", s.as_ref(), "\x1b[0m")
+}
+
+fn bold(s: impl std::fmt::Display) -> String {
+    format!("{}{}{}", "\x1b[1m", format!("{}", s), "\x1b[0m")
+}
+
+fn pink(s: impl std::fmt::Display) -> String {
+    format!("{}{}{}", "\x1b[38;2;249;38;114;1m", format!("{}", s), "\x1b[0m")
+}
+
+fn gray(s: impl std::fmt::Display) -> String {
+    format!("{}{}{}", "\x1b[38;2;102;217;239m", format!("{}", s), "\x1b[0m")
+}
+
+fn green(s: impl std::fmt::Display) -> String {
+    format!("{}{}{}", "\x1b[38;2;166;226;46m", format!("{}", s), "\x1b[0m")
 }
 
 static LEN: usize = 60;
 fn bro() -> Result<(), Box<dyn std::error::Error>> {
-    let v: Vec<CtfEvent> = reqwest::blocking::get("https://ctftime.org/api/v1/events/?limit=10")?.json().unwrap();
+    let v: Vec<CtfEvent> = reqwest::blocking::get("https://ctftime.org/api/v1/events/?limit=30")?.json().unwrap();
 
     for event in v {
         let mut text : Vec<String>  = vec![];
-        text.push(format!("|{:-^1$}|", format!(" {} ", event.title), LEN));
+        let title = format!(" {} ", pink(event.title));
+        text.push(format!("┌{:─^1$}┐", title, LEN + extra_bytes(&title)));
 
         let duration = format_duration(&event.finish.signed_duration_since(event.start));
-        text.push(double_line(&format!("Date: {}", event.start),
-                              &format!("Duration: {}", duration)));
+        text.push(double_line(&format!("{}: {}", blue("Date"), bold(event.start)),
+                              &format!("{}: {}", blue("Duration"), bold(duration))));
 
-        text.push(double_line(&format!("Organizers: {}", event.organizers[0].name),
-                              &format!("Category: {}", event.format)));
+        text.push(double_line(&format!("{}: {}", blue("Organizers"), green((&event.organizers[0].name))),
+                              &format!("{}: {}", blue("Category"), bold(event.format))));
 
-        text.push(double_line(&format!("Restrictions: {}", event.restrictions),
-                              &format!("Weight: {}", event.weight)));
+        text.push(double_line(&format!("{}: {}", blue("Restrictions"), bold(event.restrictions)),
+                              &format!("{}: {}", blue("Weight"), bold(event.weight))));
 
-        text.push(double_line(&format!("onsite: {}", event.onsite),
-                              &format!("Participants: {}", event.participants)));
+        text.push(double_line(&format!("{}: {}", blue("Onsite"), bold(event.onsite)),
+                              &format!("{}: {}", blue("Participants"), bold(event.participants))));
 
-        text.push(double_line(&format!("ctftime_url: {}", event.ctftime_url),
+        text.push(double_line(&format!("{}: {}", blue("ctftime url"), gray(event.ctftime_url)),
                               &format!("")));
 
-        text.push(double_line(&format!("url: {}", event.url.unwrap_or(String::from("None"))),
+        text.push(double_line(&format!("{}: {}", blue("website"), gray(event.url.unwrap_or(String::from("None")))),
                               &format!("")));
 
-        text.push(format!("|{:-^1$}|", "",  LEN));
+        text.push(format!("└{:─^1$}┘", "",  LEN));
 
         let mut downloaded = false;
         let img : Vec<u8>;
