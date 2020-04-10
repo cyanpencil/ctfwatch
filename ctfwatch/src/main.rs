@@ -88,7 +88,7 @@ fn green(s: impl std::fmt::Display) -> String {
 }
 
 static LEN: usize = 60;
-fn bro() -> Result<(), Box<dyn std::error::Error>> {
+fn justdoit() -> Result<(), Box<dyn std::error::Error>> {
     let v: Vec<CtfEvent> = reqwest::blocking::get("https://ctftime.org/api/v1/events/?limit=30")?.json().unwrap();
 
     for event in v {
@@ -156,5 +156,8 @@ fn bro() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    bro()
+    println!("# author: cyanpencil      source: github.com/cyanpencil/ctfwatch");
+    println!("# data pulled from ctftime.org");
+    println!();
+    justdoit()
 }
