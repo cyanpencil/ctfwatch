@@ -96,11 +96,12 @@ fn justdoit() -> Result<(), Box<dyn std::error::Error>> {
         let title = format!(" {} ", pink(event.title));
         text.push(format!("┌{:─^1$}┐", title, LEN + extra_bytes(&title)));
 
-        let duration = format_duration(&event.finish.signed_duration_since(event.start));
+        let mut duration = format_duration(&event.finish.signed_duration_since(event.start));
+        duration.truncate(8);
         text.push(double_line(&format!("{}: {}", blue("Date"), bold(event.start)),
                               &format!("{}: {}", blue("Duration"), bold(duration))));
 
-        text.push(double_line(&format!("{}: {}", blue("Organizers"), green((&event.organizers[0].name))),
+        text.push(double_line(&format!("{}: {}", blue("Organizers"), green(&event.organizers[0].name)),
                               &format!("{}: {}", blue("Category"), bold(event.format))));
 
         text.push(double_line(&format!("{}: {}", blue("Restrictions"), bold(event.restrictions)),
