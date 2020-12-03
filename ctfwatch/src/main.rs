@@ -55,15 +55,19 @@ fn format_duration(d: &Duration) -> String {
     tmp.join(" ")
 }
 
+fn strip_ansi(s: &String) -> String {
+    String::from_utf8(strip_ansi_escapes::strip(s).unwrap()).unwrap()
+}
+
 fn extra_bytes (s1: &String) -> usize {
-    s1.len() - strip_ansi_escapes::strip(&s1).unwrap().len()
+    s1.chars().count() - strip_ansi(&s1).chars().count()
 }
 
 fn double_line (s1: &String, s2: &String) -> String {
     let mut fin = format!("│ {}", s1);
-    let fin_len = strip_ansi_escapes::strip(&fin).unwrap().len();
-    let fin_len2 = strip_ansi_escapes::strip(&s2).unwrap().len();
-    fin.push_str(&format!(" {: >1$} │", format!(" {}", s2), LEN + 1 - fin_len + (s2.len() - fin_len2)));
+    let fin_len = strip_ansi(&fin).chars().count();
+    let fin_len2 = strip_ansi(&s2).chars().count();
+    fin.push_str(&format!(" {: >1$} │", format!(" {}", s2), LEN - 1 - fin_len + (s2.chars().count() - fin_len2)));
     fin
 }
 
