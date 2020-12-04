@@ -67,6 +67,9 @@ fn double_line (s1: &String, s2: &String) -> String {
     let mut fin = format!("│ {}", s1);
     let fin_len = strip_ansi(&fin).chars().count();
     let fin_len2 = strip_ansi(&s2).chars().count();
+    if fin_len > LEN {
+        return fin;
+    }
     fin.push_str(&format!(" {: >1$} │", format!(" {}", s2), LEN - 1 - fin_len + (s2.chars().count() - fin_len2)));
     fin
 }
