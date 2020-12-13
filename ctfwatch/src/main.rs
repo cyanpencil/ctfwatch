@@ -60,7 +60,7 @@ fn strip_ansi(s: &String) -> String {
 }
 
 fn extra_bytes (s1: &String) -> usize {
-    s1.chars().count() - strip_ansi(&s1).chars().count()
+    s1.len() - strip_ansi(&s1).chars().count()
 }
 
 fn double_line (s1: &String, s2: &String) -> String {
