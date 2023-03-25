@@ -96,7 +96,13 @@ fn green(s: impl std::fmt::Display) -> String {
 
 static LEN: usize = 60;
 fn justdoit() -> Result<(), Box<dyn std::error::Error>> {
-    let v: Vec<CtfEvent> = reqwest::blocking::get("https://ctftime.org/api/v1/events/?limit=10")?.json().unwrap();
+    let client = reqwest::blocking::Client::builder()
+                .user_agent("Mozilla Firefox")
+                .build()?;
+    //let v: Vec<CtfEvent> = client.get("http://google.com").send()?.json()?;
+    //let v: Vec<CtfEvent> = client.get("https://ctftime.org").send()?.text()?;
+    //let v: Vec<CtfEvent> = client.get("https://ctftime.org").send()?.json()?;
+    let v: Vec<CtfEvent> = client.get("http://ctftime.org/api/v1/events/?limit=10").send()?.json()?;
 
     for event in v {
         let mut text : Vec<String>  = vec![];
