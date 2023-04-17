@@ -6,6 +6,7 @@ use chrono::{FixedOffset, Duration, DateTime};
 use serde::Deserialize;
 use std::fs::File;
 use std::io::prelude::*;
+use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct CtfTeam {
@@ -60,7 +61,7 @@ fn strip_ansi(s: &String) -> String {
 }
 
 fn extra_bytes (s1: &String) -> usize {
-    s1.len() - strip_ansi(&s1).chars().count()
+    s1.graphemes(true).count() - strip_ansi(&s1).graphemes(true).count()
 }
 
 fn double_line (s1: &String, s2: &String) -> String {
@@ -106,6 +107,7 @@ fn justdoit() -> Result<(), Box<dyn std::error::Error>> {
 
     for event in v {
         let mut text : Vec<String>  = vec![];
+        //let title = format!(" {} ", pink(event.title)).chars().map(|c| if c.is_ascii() {c} else {'?'}).collect();
         let title = format!(" {} ", pink(event.title));
         text.push(format!("┌{:─^1$}┐", title, LEN + extra_bytes(&title)));
 
